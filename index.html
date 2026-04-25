@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Administración</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0a0a0f;
+    --surface:  #111118;
+    --border:   #1e1e2e;
+    --accent:   #e63946;
+    --accent2:  #457b9d;
+    --text:     #e8e8f0;
+    --muted:    #666680;
+    --online:   #2ec4b6;
+    --offline:  #444460;
+    --radius:   6px;
+    --mono:     'Space Mono', monospace;
+    --sans:     'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+  .badge {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    background: var(--border);
+    border: 1px solid var(--muted);
+    padding: 0.3rem 0.75rem;
+    border-radius: 2px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── Main layout ── */
+  main {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.02em;
+  }
+  h1 em { color: var(--accent); font-style: normal; }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .btn-refresh {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all 0.2s;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .btn-refresh:hover { border-color: var(--accent2); color: var(--text); }
+
+  .stat {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .stat b { color: var(--online); }
+
+  /* ── Table ── */
+  .table-wrap {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.9rem 1.25rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .id-cell {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    width: 3rem;
+  }
+  .user-cell {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Status dot ── */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot.online  { background: var(--online); box-shadow: 0 0 6px var(--online); animation: pulse 2s infinite; }
+  .dot.offline { background: var(--offline); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  /* ── Admin badge ── */
+  .admin-tag {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    background: rgba(230,57,70,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(230,57,70,0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+  .user-tag {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── Kick button ── */
+  .btn-kick {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    background: transparent;
+    border: 1px solid rgba(230,57,70,0.4);
+    color: var(--accent);
+    padding: 0.4rem 0.85rem;
+    cursor: pointer;
+    border-radius: var(--radius);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.18s;
+  }
+  .btn-kick:hover:not(:disabled) {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-kick:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+    border-color: var(--border);
+    color: var(--muted);
+  }
+
+  /* ── Toast notifications ── */
+  #toast-container {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    z-index: 999;
+  }
+  .toast {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.75rem 1.1rem;
+    border-radius: var(--radius);
+    border-left: 3px solid;
+    max-width: 320px;
+    animation: slideIn 0.25s ease;
+    letter-spacing: 0.04em;
+  }
+  .toast.ok    { background: #0d1f1e; border-color: var(--online); color: var(--online); }
+  .toast.error { background: #1f0d0e; border-color: var(--accent); color: var(--accent); }
+
+  @keyframes slideIn {
+    from { transform: translateX(40px); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+  }
+
+  /* ── Loading state ── */
+  .loading-row td {
+    text-align: center;
+    padding: 3rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── SQL hint ── */
+  .sql-hint {
+    margin-top: 2rem;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+  }
+  .sql-hint p {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .sql-hint code {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent2);
+    background: var(--surface);
+    padding: 0.6rem 0.9rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Admin<span>Panel</span></div>
+  <span class="badge">miserver · usuarios</span>
+</header>
+
+<main>
+  <h1>Gestión de <em>usuarios</em></h1>
+  <p class="subtitle">// Cerrar sesiones activas en tiempo real</p>
+
+  <div class="toolbar">
+    <button class="btn-refresh" onclick="cargarUsuarios()">↻ Actualizar</button>
+    <span class="stat" id="stat-text">Cargando...</span>
+  </div>
+<div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
+    <button class="btn-refresh" onclick="mostrarFormulario()" style="border-color: var(--accent2); color: var(--accent2);">+ Añadir usuario</button>
+</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Sesión</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body">
+        <tr class="loading-row"><td colspan="5">CARGANDO USUARIOS...</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="form-añadir" style="display:none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem;">
+    <input type="text" id="nuevo-usuario" placeholder="Usuario" style="font-family: var(--mono); background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.5rem 0.75rem; border-radius: var(--radius); margin-right: 0.5rem;">
+    <input type="password" id="nueva-contrasena" placeholder="Contraseña" style="font-family: var(--mono); background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.5rem 0.75rem; border-radius: var(--radius); margin-right: 0.5rem;">
+    <button class="btn-refresh" onclick="añadirUsuario()" style="border-color: var(--accent2); color: var(--accent2);">Guardar</button>
+    <button class="btn-refresh" onclick="ocultarFormulario()" style="margin-left: 0.5rem;">Cancelar</button>
+</div>
+</main>
+
+<div id="toast-container"></div>
+
+<script>
+  function mostrarFormulario() {
+    document.getElementById('form-añadir').style.display = 'block';
+}
+
+function ocultarFormulario() {
+    document.getElementById('form-añadir').style.display = 'none';
+    document.getElementById('nuevo-usuario').value = '';
+    document.getElementById('nueva-contrasena').value = '';
+}
+
+async function añadirUsuario() {
+    const usuario  = document.getElementById('nuevo-usuario').value.trim();
+    const password = document.getElementById('nueva-contrasena').value.trim();
+
+    if (!usuario || !password) { toast('Rellena todos los campos.', 'error'); return; }
+
+    const fd = new FormData();
+    fd.append('action', 'añadir');
+    fd.append('usuario', usuario);
+    fd.append('password', password);
+
+    try {
+        const res  = await fetch('admin.php', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.ok) {
+            toast(data.msg, 'ok');
+            ocultarFormulario();
+            cargarUsuarios();
+        } else {
+            toast(data.error || 'Error desconocido.', 'error');
+        }
+    } catch (e) {
+        toast('Error de red.', 'error');
+    }
+}
+  async function cargarUsuarios() {
+    const tbody = document.getElementById('tabla-body');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="5">CARGANDO...</td></tr>';
+
+    try {
+      const res  = await fetch('admin.php?action=listar');
+      const data = await res.json();
+
+      if (data.error) { toast(data.error, 'error'); return; }
+
+      const activos = data.usuarios.filter(u => u.activo == 1).length;
+      document.getElementById('stat-text').innerHTML =
+        `<b>${activos}</b> sesión${activos !== 1 ? 'es' : ''} activa${activos !== 1 ? 's' : ''} · ${data.usuarios.length} usuarios`;
+
+      tbody.innerHTML = data.usuarios.map(u => `
+        <tr id="row-${u.ID}">
+          <td class="id-cell">#${u.ID}</td>
+          <td class="user-cell">${escHtml(u.Usuario)}</td>
+          <td>
+            ${u.Admin == 1
+              ? '<span class="admin-tag">ADMIN</span>'
+              : '<span class="user-tag">USER</span>'}
+          </td>
+          <td>
+            <span class="status">
+              <span class="dot ${u.activo == 1 ? 'online' : 'offline'}"></span>
+              ${u.activo == 1 ? 'ACTIVO' : 'INACTIVO'}
+            </span>
+          </td>
+          <td>
+            <button
+              class="btn-kick"
+              onclick="expulsar(${u.ID}, '${escHtml(u.Usuario)}')"
+              ${u.activo == 0 ? 'disabled' : ''}
+              id="btn-${u.ID}">
+              EXPULSAR
+            </button>
+            <button
+              class="btn-kick"
+              style="margin-left: 8px;"
+              onclick="eliminar(${u.ID}, '${escHtml(u.Usuario)}')">
+              ELIMINAR
+            </button>
+            <button
+              class="btn-kick"
+              style="margin-left: 8px; border-color: rgba(69,123,157,0.4); color: var(--accent2);"
+              onclick="toggleAdmin(${u.ID}, '${escHtml(u.Usuario)}', ${u.Admin})">
+              ${u.Admin == 1 ? 'QUITAR ADMIN' : 'HACER ADMIN'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+    } catch (e) {
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="5">ERROR: No se pudo conectar con admin.php</td></tr>';
+      toast('Error de conexión con el servidor.', 'error');
+    }
+  }
+
+async function expulsar(id, nombre) {
+    if (!confirm(`¿Cerrar la sesión de "${nombre}"?`)) return;
+
+    const btn = document.getElementById(`btn-${id}`);
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    try {
+      const miIdRes = await fetch('get_mi_id.php');
+      const miId = await miIdRes.json();
+
+      const fd = new FormData();
+      fd.append('action', 'expulsar');
+      fd.append('id', id);
+      fd.append('mi_id', miId.id);
+
+      const res  = await fetch('admin.php', { method: 'POST', body: fd });
+      const data = await res.json();
+
+      if (data.ok) {
+        toast(data.msg, 'ok');
+        // Actualizar fila visualmente
+        const dot = document.querySelector(`#row-${id} .dot`);
+        if (dot) { dot.className = 'dot offline'; dot.nextSibling.textContent = ' INACTIVO'; }
+        btn.textContent = 'EXPULSAR';
+        btn.disabled = true;
+      } else {
+        toast(data.error || 'Error desconocido.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'EXPULSAR';
+      }
+    } catch (e) {
+      toast('Error de red.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'EXPULSAR';
+    }
+  }
+
+  async function eliminar(id, nombre) {
+    if (!confirm(`¿Eliminar a "${nombre}" de la base de datos?`)) return;
+
+    const fd = new FormData();
+    fd.append('action', 'eliminar');
+    fd.append('id', id);
+
+    try {
+        const res  = await fetch('admin.php', { method: 'POST', body: fd });
+        const data = await res.json();
+
+        if (data.ok) {
+            toast(data.msg, 'ok');
+            document.getElementById(`row-${id}`).remove();
+        } else {
+            toast(data.error || 'Error desconocido.', 'error');
+        }
+    } catch (e) {
+        toast('Error de red.', 'error');
+    }
+}
+
+  function toast(msg, type = 'ok') {
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.textContent = msg;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Carga inicial + refresco automático cada 30s
+  cargarUsuarios();
+  setInterval(cargarUsuarios, 30000);
+
+  async function toggleAdmin(id, nombre, esAdmin) {
+    const accion = esAdmin == 1 ? 'quitar admin a' : 'hacer admin a';
+    if (!confirm(`¿${accion} "${nombre}"?`)) return;
+
+    const fd = new FormData();
+    fd.append('action', 'toggle_admin');
+    fd.append('id', id);
+
+    try {
+        const res  = await fetch('admin.php', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.ok) {
+            toast(data.msg, 'ok');
+            cargarUsuarios();
+        } else {
+            toast(data.error || 'Error desconocido.', 'error');
+        }
+    } catch (e) {
+        toast('Error de red.', 'error');
+    }
+}
+</script>
+<script>
+setInterval(async () => {
+    const res  = await fetch('check_sesion.php');
+    const data = await res.json();
+    if (!data.activo) {
+        window.location.href = 'MiServer.html';
+    }
+}, 1000);
+</script>
+</body>
+</html>

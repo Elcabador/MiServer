@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>MiServer</title>
+    <link rel="icon" type="image/svg" href="../MiServer/Imagenes_MyServer/Logo2.svg">
+    <style>
+    .boton {
+        display: inline-block;
+        background-color: black;
+        color: rgb(175, 241, 241);
+        border: 2px solid rgb(175, 241, 241);
+        border-radius: 8px;
+        padding: 10px 15px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .boton:hover {
+        background-color: rgb(175, 241, 241);
+        color: black;
+    }
+    .tabla {
+        border-collapse: collapse;
+        width: 60%;
+        margin: 20px auto;
+        background-color: white;
+    }
+    .tabla th, .tabla td {
+        border: 2px solid black;
+        padding: 10px;
+        text-align: center;
+    }
+    .tabla th {
+        background-color: rgb(175, 241, 241);
+    }
+    table {
+        border: 2px solid #353A46;
+        background-color: #3ABAF1;
+    }
+    input[type=text], input[type=password] {
+        width: 100%;
+        padding: 8px 20px;
+        border: 2px solid #ccc;
+        box-sizing: border-box;
+    }
+    img {
+        width: 100px;
+        height: 100px;
+    }
+    label {
+        font-size: 14px;
+        font-weight: bold;
+        font-family: arial;
+    }
+    input[type=submit] {
+        background-color: #1C94C8;
+        color: white;
+        padding: 8px 10px;
+        margin: 8px 0px;
+        border: solid;
+        cursor: pointer;
+        width: 40%;
+    }
+    form table {
+        margin: 0 auto;
+    }
+    </style>
+</head>
+<body style="background-color: rgb(190, 218, 218);">
+    <h1 style="text-align: center;"><u>Título</u></h1>
+    <div style="text-align: center;">
+        <p id="reloj" style="
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            background-color: black;
+            color: rgb(255, 255, 255);
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 8px;
+        "></p>
+    </div>
+
+    <script>
+    setInterval(() => {
+        document.getElementById("reloj").innerHTML =
+            new Date().toLocaleTimeString();
+    }, 1000);
+    </script>
+
+    <h3>Bienvenido a mi página.</h3>
+    <h3>Aquí tienes la página de mi primo:</h3>
+    <a href="http://192.168.1.61/MiServer/" class="boton">Ir a la otra página</a>
+
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th>Pueblo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Xabat</td>
+                <td>16</td>
+                <td>Alegría</td>
+            </tr>
+            <tr>
+                <td>Oier</td>
+                <td>14</td>
+                <td>Legutio</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="text-align: center;">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/961T8xFfOV8"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 20px;">
+        <form method="post" action="login.php">
+        <table>
+        <tr><td colspan="2" style="background-color:#33A8DB; padding-bottom:5px; padding-top:5px; text-align:center;">
+        <label>Login</label></td></tr>
+        <tr><td><label>Usuario</label></td></tr>
+        <tr><td><input type="text" name="txtusuarios"/></td></tr>
+        <tr><td><label>Password</label></td></tr>
+        <tr><td><input type="password" name="txtcontrasena"/></td></tr>
+        <tr><td><input type="submit" value="Ingresar"/></td></tr>
+        </table>
+        </form>
+
+        <form method="post" action="registro.php">
+        <table>
+        <tr><td colspan="2" style="background-color:#33A8DB; padding-bottom:5px; padding-top:5px; text-align:center;">
+        <label>Registro</label></td></tr>
+        <tr><td><label>Usuario</label></td></tr>
+        <tr><td><input type="text" name="nuevo_usuario"/></td></tr>
+        <tr><td><label>Password</label></td></tr>
+        <tr><td><input type="password" name="nueva_contrasena"/></td></tr>
+        <tr><td><input type="submit" value="Registrarse"/></td></tr>
+        </table>
+        </form>
+    </div>
+
+</body>
+</html>

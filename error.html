@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Error de acceso</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:rgb(190, 218, 218);
+            --surface: #1a1d27;
+            --accent: #33A8DB;
+            --text: #e8eaf0;
+            --muted: #6b7280;
+            --border: rgba(255,77,109,0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Syne', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 50% 50%, rgba(255,77,109,0.07) 0%, transparent 60%);
+            animation: pulse 4s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .card {
+            position: relative;
+            z-index: 10;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 50px 60px;
+            text-align: center;
+            max-width: 420px;
+            animation: appear 0.5s ease both;
+        }
+
+        @keyframes appear {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .error-code {
+            font-family: 'Space Mono', monospace;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 10px;
+            text-shadow: 0 0 40px #33A8DB;
+        }
+
+        .error-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .error-msg {
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-bottom: 36px;
+            line-height: 1.6;
+        }
+
+        .boton {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            text-decoration: none;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .boton:hover {
+            box-shadow: 0 0 25px rgba(255,77,109,0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="error-code">401</div>
+        <h1 class="error-title">Acceso denegado</h1>
+        <p class="error-msg">El usuario o la contraseña son incorrectos.<br>Por favor, inténtalo de nuevo.</p>
+        <a href="MiServer.html" class="boton">← Volver al login</a>
+    </div>
+</body>
+</html>

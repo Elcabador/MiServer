@@ -1,0 +1,2 @@
+use usuarioycontraseña;
+slect * from prueba;

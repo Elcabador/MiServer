@@ -1,0 +1,25 @@
+import tkinter as tk
+
+# Crear la ventana principal
+ventana = tk.Tk()
+ventana.title("Mi primera ventana")
+
+# Activar modo pantalla completa
+ventana.attributes("-fullscreen", True)
+
+# Crear una etiqueta para mostrar el mensaje
+mensaje = tk.Label(ventana, text="¡Hola desde la ventana!", font=("Arial", 24), fg="Green")
+mensaje.pack(pady=20, padx=20, anchor="w")
+
+# Crear un botón
+def saludo():
+    mensaje.config(text="¡Hasta la proxima!", fg="black")
+
+boton1 = tk.Button(ventana, text="Haz clic aquí", command=saludo, font=("Arial", 18))
+boton1.pack(pady=20, padx=20, anchor="w")
+
+boton2 = tk.Button(ventana, text="Salir", command=ventana.destroy, font=("Arial", 18))
+boton2.pack(pady=20, padx=20, anchor="w")
+
+# Iniciar el bucle principal
+ventana.mainloop()
